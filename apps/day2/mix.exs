@@ -35,6 +35,9 @@ defmodule Day2.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    []
+    [
+      {:credo, "~> 0.2", only: [:dev, :test]},
+      {:dialyxir, "~> 0.3", only: [:dev]},
+    ]
   end
 end
