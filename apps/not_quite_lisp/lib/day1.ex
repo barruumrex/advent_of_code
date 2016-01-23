@@ -5,23 +5,37 @@ defmodule Day1 do
     |> process
   end
 
-  def process([]) do
+  defp process({_options, []}) do
     IO.puts "Enter the text, Santa!"
   end
-
-  def process(text) do
+  defp process({[basement: false], text}) do
     text
-    |> UnbalancedParen.degree
-    |> format_response
+    |> UnbalancedParen.get_balance
+    |> format_basement
+    |> IO.puts
+  end
+  defp process({_options, text}) do
+    text
+    |> UnbalancedParen.get_degree
+    |> format_direction
     |> IO.puts
   end
 
-  defp format_response(floor) do
+  defp format_basement({:negative, step}) do
+    "Directions required entering a non-existent basement after #{step} steps"
+  end
+  defp format_basement({_, floor}) do
+    format_direction(floor)
+  end
+
+  defp format_direction(floor) do
     "Go to floor #{floor}"
   end
 
   defp parse_args(args) do
-    {_options, [text], _invalid} = OptionParser.parse(args)
-    text
+    case OptionParser.parse(args, strict: ["basement": :boolean]) do
+      {options, [text], _invalid} -> {options, text}
+      {options, [], _invalid} -> {options, []}
+    end
   end
 end
