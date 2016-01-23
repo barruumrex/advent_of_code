@@ -1,4 +1,22 @@
-defmodule Day1 do
+defmodule Day1.CLI do
+  @moduledoc """
+    CLI for day1 problems. Pass a string to get the floor number. Use the --no-basement option to check for
+    bad instruction when there is no basement.
+
+    #Examples
+
+    $./day_1
+    Enter the text, Santa!
+
+    $./day_1 "(()"
+    Go to floor 1
+
+    $./day_1 "())("
+    Go to floor 0
+
+    $./day_1 "())(" --no-basement
+    Directions required entering a non-existent basement after 3 steps
+  """
   def main(args) do
     args
     |> parse_args

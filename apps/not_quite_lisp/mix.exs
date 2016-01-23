@@ -9,7 +9,7 @@ defmodule UnbalanceParen.Mixfile do
      deps_path: "../../deps",
      lockfile: "../../mix.lock",
      elixir: "~> 1.2",
-     escript: [main_module: Day1],
+     escript: [main_module: Day1.CLI],
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      deps: deps]
@@ -36,6 +36,8 @@ defmodule UnbalanceParen.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    []
+    [
+      {:credo, "~> 0.2", only: [:dev, :test]}
+    ]
   end
 end
