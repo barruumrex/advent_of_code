@@ -39,7 +39,7 @@ defmodule Day3.Mixfile do
     [
       {:credo, "~> 0.3.0-dev2", only: [:dev, :test]},
       {:dialyxir, "~> 0.3", only: [:dev]},
-      {:benchfella, "~> 0.3.0"},
+      {:benchfella, "~> 0.3.0", only: [:dev, :test]},
     ]
   end
 end
