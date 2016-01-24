@@ -6,7 +6,7 @@ defmodule Day3.CLI do
     args
     |> parse_args
     |> process
-    |> IO.inspect
+    |> format
   end
 
   defp process({:error, reason}), do: IO.puts reason
@@ -16,6 +16,8 @@ defmodule Day3.CLI do
     |> String.strip
     |> deliver(options)
   end
+
+  defp format(visited), do: IO.puts "#{visited} houses were visited"
 
   defp deliver(directions, [robot: true]), do: Day3.robo_deliveries(directions)
   defp deliver(directions, _), do: Day3.make_deliveries(directions)
