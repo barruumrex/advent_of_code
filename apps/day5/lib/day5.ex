@@ -30,7 +30,7 @@ defmodule Day5 do
   @spec three_vowels_within?([String.t]) :: boolean
   defp three_vowels_within?(letters), do: do_three_vowels_within?(letters, 0)
 
-  @spec do_three_vowels_within?([String.t], integer) :: boolean
+  @spec do_three_vowels_within?([String.t], 0..3) :: boolean
   defp do_three_vowels_within?(_letters, 3), do: true
   defp do_three_vowels_within?([], _matches), do: false
   defp do_three_vowels_within?([letter | tail], matches) do
