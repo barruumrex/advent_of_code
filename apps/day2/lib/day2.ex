@@ -3,6 +3,11 @@ defmodule Day2 do
     Helper functions for day2 of Advent of code
   """
 
+  @typedoc """
+  Tuple representing length, width, and height
+  """
+  @type dimensions :: {integer, integer, integer}
+
   @doc """
     Takes a string representation of a box and returns the amount of necessary wrapping paper
 
@@ -22,7 +27,7 @@ defmodule Day2 do
     |> get_total
   end
 
-  @spec get_dimensions(String.t) :: {integer, integer, integer}
+  @spec get_dimensions(String.t) :: dimensions
   defp get_dimensions(text) do
     text
     |> String.split("x")
@@ -30,10 +35,10 @@ defmodule Day2 do
     |> List.to_tuple
   end
 
-  @spec get_sides({integer, integer, integer}) :: {integer, integer, integer}
+  @spec get_sides(dimensions) :: dimensions
   defp get_sides({l, w, h}), do: {l * w, w * h, h * l}
 
-  @spec get_total({integer, integer, integer}) :: integer
+  @spec get_total(dimensions) :: integer
   defp get_total({a, b, c}), do: 2 * a + 2 * b + 2 * c + Enum.min([a, b, c])
 
 
@@ -55,18 +60,18 @@ defmodule Day2 do
     |> calculate_lengths
   end
 
-  @spec calculate_lengths({integer, integer, integer}) :: integer
+  @spec calculate_lengths(dimensions) :: integer
   defp calculate_lengths(dimensions) do
     calc_wrap_ribbon(dimensions) + calc_bow(dimensions)
   end
 
-  @spec calc_wrap_ribbon({integer, integer, integer}) :: integer
+  @spec calc_wrap_ribbon(dimensions) :: integer
   defp calc_wrap_ribbon({l, w, h}) do
     [l, w, h]
     |> List.delete(Enum.max([l, w, h]))
     |> Enum.reduce(0, fn(x, acc) -> acc + (2 * x) end)
   end
 
-  @spec calc_bow({integer, integer, integer}) :: integer
+  @spec calc_bow(dimensions) :: integer
   defp calc_bow({l, w, h}), do: l * w * h
 end
