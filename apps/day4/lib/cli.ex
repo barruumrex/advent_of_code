@@ -17,7 +17,7 @@ defmodule Day4.CLI do
     end
   end
 
-  defp process({:error, reason}), do: IO.puts reason
+  defp process({:error, reason}), do: reason
   defp process({:ok, filename, _options}) do
     filename
     |> File.read!
@@ -31,5 +31,8 @@ defmodule Day4.CLI do
 
   defp format({solution5, solution6}) do
     "Solution with five zeroes is #{solution5}.\nSolution with six zeroes is #{solution6}"
+  end
+  defp format(reason) do
+    reason
   end
 end

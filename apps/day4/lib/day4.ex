@@ -21,13 +21,13 @@ defmodule Day4 do
     |> check_coins(text, fn(x) -> create_validator(zeroes).(x) end)
   end
 
-  @spec check_coins([integer], String.t, fun) :: integer
+  @spec check_coins(Enumerable.t, String.t, (binary -> boolean)) :: integer
   defp check_coins(candidates, text, validator) do
     candidates
     |> Enum.find(fn(x) -> check_coin(text <> to_string(x), validator) end)
   end
 
-  @spec check_coin(String.t, fun) :: boolean
+  @spec check_coin(String.t, (binary -> boolean)) :: boolean
   defp check_coin(candidate, validator) do
     candidate
     |> create_coin
@@ -37,7 +37,7 @@ defmodule Day4 do
   @spec create_coin(String.t) :: binary
   defp create_coin(candidate), do: :crypto.hash(:md5, candidate)
 
-  @spec create_validator(integer) :: fun
+  @spec create_validator(integer) :: (binary -> boolean)
   defp create_validator(zeroes) do
     prefix_size = zeroes * 4
     fn
