@@ -6,6 +6,7 @@ defmodule Day3.CLI do
     args
     |> parse_args
     |> process
+    |> IO.inspect
   end
 
   defp process({:error, reason}), do: IO.puts reason
@@ -18,6 +19,7 @@ defmodule Day3.CLI do
   defp process_line(text, acc) do
     text
     |> String.strip
+    |> Day3.make_deliveries
   end
 
   defp parse_args(args) do
