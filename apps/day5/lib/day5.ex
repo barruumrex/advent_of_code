@@ -110,4 +110,44 @@ defmodule Day5 do
     text
     |> String.contains?(@forbidden)
   end
+
+  @doc """
+  Checks if text contains any repeated non-overlapping tuples
+
+  #Examples
+
+      iex> Day5.repeated_tuple?("qjhvhtzxzqqjkmpb")
+      true
+
+      iex> Day5.repeated_tuple?("xxyxx")
+      true
+
+      iex> Day5.repeated_tuple?("uurcxstgmygtbstg")
+      true
+
+      iex> Day5.repeated_tuple?("ieodomkazucvgmuy")
+      false
+  """
+  @spec repeated_tuple?(String.t) :: boolean
+  def repeated_tuple?(text) do
+    text
+    |> String.graphemes
+    |> tuple_within?
+  end
+
+  @spec tuple_within?([String.t]) :: boolean
+  defp tuple_within?([first | rest]), do: do_tuple_within?(first, rest)
+
+  @spec do_tuple_within?(String.t, [String.t]) :: boolean
+  defp do_tuple_within?(_first, rest) when length(rest) < 3, do: false
+  defp do_tuple_within?(first, [second | rest]) do
+    tuple = first <> second
+    text = Enum.join(rest)
+    if String.contains?(text, tuple) do
+      true
+    else
+      do_tuple_within?(second, rest)
+    end
+  end
+
 end
