@@ -112,6 +112,29 @@ defmodule Day5 do
   end
 
   @doc """
+  Determines if a string is nice according to the year 2 rules
+
+  #Examples
+
+      iex> Day5.super_nice?("qjhvhtzxzqqjkmpb")
+      true
+
+      iex> Day5.super_nice?("xxyxx")
+      true
+
+      iex> Day5.super_nice?("uurcxstgmygtbstg")
+      false
+
+      iex> Day5.super_nice?("ieodomkazucvgmuy")
+      false
+  """
+  @spec super_nice?(String.t) :: boolean
+  def super_nice?(text) do
+    repeated_tuple?(text) && contains_spaced_dup?(text)
+  end
+
+
+  @doc """
   Checks if text contains any repeated non-overlapping tuples
 
   #Examples
@@ -147,4 +170,35 @@ defmodule Day5 do
     |> String.contains?(first <> second)
     |> do_tuple_within?(second, rest)
   end
+
+  @doc """
+  Checks if a character repeats if with a single character between the repetition
+
+  #Examples
+  #Examples
+
+      iex> Day5.contains_spaced_dup?("qjhvhtzxzqqjkmpb")
+      true
+
+      iex> Day5.contains_spaced_dup?("xxyxx")
+      true
+
+      iex> Day5.contains_spaced_dup?("uurcxstgmygtbstg")
+      false
+
+      iex> Day5.contains_spaced_dup?("ieodomkazucvgmuy")
+      true
+  """
+  @spec contains_spaced_dup?(String.t) :: boolean
+  def contains_spaced_dup?(text) do
+    text
+    |> String.graphemes
+    |> do_contains_spaced_dup?
+  end
+
+  @spec do_contains_spaced_dup?([String.t]) :: boolean
+  defp do_contains_spaced_dup?([x, _, x | _tail]), do: true
+  defp do_contains_spaced_dup?(tail) when length(tail) < 4, do: false
+  defp do_contains_spaced_dup?([_head | tail]), do: do_contains_spaced_dup?(tail)
+
 end
