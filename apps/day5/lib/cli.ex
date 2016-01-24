@@ -13,12 +13,22 @@ defmodule Day5.CLI do
   defp process({:ok, filename}) do
     filename
     |> File.stream!
-    |> Enum.reduce({0, 0}, &process_line/2)
+    |> Enum.reduce(0, &process_line/2)
+    |> format
   end
 
   defp process_line(text, acc) do
     text
     |> String.strip
+    |> Day5.is_nice?
+    |> increment(acc)
+  end
+
+  defp increment(true, acc), do: acc + 1
+  defp increment(false, acc), do: acc
+
+  defp format(text) do
+    "There are #{text} nice children"
   end
 
   defp output_response(text) do
