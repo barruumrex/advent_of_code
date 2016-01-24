@@ -58,7 +58,7 @@ defmodule UnbalancedParen do
       iex> UnbalancedParen.get_balance("(()())")
       {:balanced, 0}
   """
-  @spec get_balance(String.t) :: {atom, integer}
+  @spec get_balance(String.t) :: {:balanced, 0} | {:negative, integer} | {:positive, integer}
   def get_balance(text) do
     text
     |> String.graphemes
@@ -66,15 +66,18 @@ defmodule UnbalancedParen do
     |> is_balanced?
   end
 
+  @spec fast_fail_shift_balance(String.t, {integer, integer}) :: {atom, {integer, integer}}
   defp fast_fail_shift_balance(_, {-1, location}), do: {:halt, {-1, location}}
   defp fast_fail_shift_balance("(", {balance, location}), do: {:cont, {balance + 1, location + 1}}
   defp fast_fail_shift_balance(")", {balance, location}), do: {:cont, {balance - 1, location + 1}}
   defp fast_fail_shift_balance(_, {balance, location}), do: {:cont, {balance, location + 1}}
 
+  @spec is_balanced?({integer, integer}) :: {:balanced, 0} | {:negative, integer} | {:positive, integer}
   defp is_balanced?({-1, location}), do: {:negative, location}
   defp is_balanced?({balance, _location}) when balance > 0, do: {:positive, balance}
   defp is_balanced?(_), do: {:balanced, 0}
 
+  @spec shift_balance(String.t, integer) :: integer
   defp shift_balance("(", balance), do: balance + 1
   defp shift_balance(")", balance), do: balance - 1
   defp shift_balance(_letter, balance), do: balance
