@@ -136,18 +136,15 @@ defmodule Day5 do
   end
 
   @spec tuple_within?([String.t]) :: boolean
-  defp tuple_within?([first | rest]), do: do_tuple_within?(first, rest)
+  defp tuple_within?([first | rest]), do: do_tuple_within?(false, first, rest)
 
-  @spec do_tuple_within?(String.t, [String.t]) :: boolean
-  defp do_tuple_within?(_first, rest) when length(rest) < 3, do: false
-  defp do_tuple_within?(first, [second | rest]) do
-    tuple = first <> second
-    text = Enum.join(rest)
-    if String.contains?(text, tuple) do
-      true
-    else
-      do_tuple_within?(second, rest)
-    end
+  @spec do_tuple_within?(boolean, String.t, [String.t]) :: boolean
+  defp do_tuple_within?(true, _, _), do: true
+  defp do_tuple_within?(_result, _, rest) when length(rest) < 3, do: false
+  defp do_tuple_within?(_, first, [second | rest]) do
+    rest
+    |> Enum.join
+    |> String.contains?(first <> second)
+    |> do_tuple_within?(second, rest)
   end
-
 end
