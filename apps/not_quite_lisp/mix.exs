@@ -37,7 +37,7 @@ defmodule UnbalanceParen.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:credo, "~> 0.2", only: [:dev, :test]},
+      {:credo, "~> 0.3.0-dev2", only: [:dev, :test]},
       {:dialyxir, "~> 0.3", only: [:dev]},
     ]
   end

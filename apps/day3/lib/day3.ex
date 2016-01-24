@@ -60,7 +60,7 @@ defmodule Day3 do
 
   @spec merge_visits(coordinate, visits) :: visits
   defp merge_visits(location, visited) do
-    Map.merge(%{location => 1}, visited, fn _k, v1, v2 -> v1 + v2 end)
+    Map.merge(visited, %{location => 1}, fn _k, v1, v2 -> v1 + v2 end)
   end
 
   @spec calc_uniq_visits({coordinate, visits}) :: non_neg_integer

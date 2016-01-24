@@ -1,3 +1,5 @@
-%{"bunt": {:hex, :bunt, "0.1.4"},
-  "credo": {:hex, :credo, "0.3.0-dev"},
+%{"benchfella": {:hex, :benchfella, "0.3.1"},
+  "bmark": {:hex, :bmark, "1.0.2"},
+  "bunt": {:hex, :bunt, "0.1.4"},
+  "credo": {:hex, :credo, "0.3.0-dev2"},
   "dialyxir": {:hex, :dialyxir, "0.3.2"}}
