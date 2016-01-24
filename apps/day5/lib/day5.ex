@@ -4,6 +4,7 @@ defmodule Day5 do
   """
 
   @vowels "aeiou"
+  @forbidden ["ab","cd","pq","xy"]
 
   @doc """
   Checks if text has three vowels
@@ -66,4 +67,23 @@ defmodule Day5 do
   defp dup_within?([letter | tail]) when letter == hd(tail), do: true
   defp dup_within?([_letter | tail]), do: dup_within?(tail)
 
+  @doc """
+  Checks if text contains forbidden sequences
+
+  #Examples
+
+      iex> Day5.contains_forbidden?("ugknbfddgicrmopn")
+      false
+
+      iex> Day5.contains_forbidden?("aaa")
+      false
+
+      iex> Day5.contains_forbidden?("haegwjzuvuyypxyu")
+      true
+  """
+  @spec contains_forbidden?(String.t) :: boolean
+  def contains_forbidden?(text) do
+    text
+    |> String.contains?(@forbidden)
+  end
 end
