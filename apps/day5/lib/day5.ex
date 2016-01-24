@@ -7,6 +7,30 @@ defmodule Day5 do
   @forbidden ["ab","cd","pq","xy"]
 
   @doc """
+  Determines if a string is nice
+
+  #Examples
+      iex> Day5.is_nice?("ugknbfddgicrmopn")
+      true
+
+      iex> Day5.is_nice?("aaa")
+      true
+
+      iex> Day5.is_nice?("jchzalrnumimnmhp")
+      false
+
+      iex> Day5.is_nice?("haegwjzuvuyypxyu")
+      false
+
+      iex> Day5.is_nice?("dvszwmarrgswjxmb")
+      false
+  """
+  @spec is_nice?(String.t) :: boolean
+  def is_nice?(text) do
+    three_vowels?(text) && contains_dups?(text) && !contains_forbidden?(text)
+  end
+
+  @doc """
   Checks if text has three vowels
 
   #Examples
