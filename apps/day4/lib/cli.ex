@@ -7,13 +7,7 @@ defmodule Day4.CLI do
     |> parse_args
     |> process
     |> format
-  end
-
-  defp process({:error, reason}), do: IO.puts reason
-  defp process({:ok, filename, options}) do
-    filename
-    |> File.read!
-    |> String.strip
+    |> IO.puts
   end
 
   defp parse_args(args) do
@@ -21,5 +15,17 @@ defmodule Day4.CLI do
       {options, [filename], _} -> {:ok, filename, options}
       {_, [], _} -> {:error, "Please specify a file"}
     end
+  end
+
+  defp process({:error, reason}), do: IO.puts reason
+  defp process({:ok, filename, _options}) do
+    filename
+    |> File.read!
+    |> String.strip
+    |> Day4.find_coin
+  end
+
+  defp format(solution) do
+    "Your solution is #{solution}"
   end
 end
