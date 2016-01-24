@@ -31,8 +31,13 @@ defmodule Day3 do
   def make_deliveries(directions) do
     directions
     |> String.graphemes
-    |> Enum.reduce({{0, 0}, %{{0, 0} => 1}}, &single_move/2)
+    |> run_route
     |> calc_uniq_visits
+  end
+
+  @spec run_route([String.t]) :: {coordinate, visits}
+  defp run_route(moves) do
+    Enum.reduce(moves, {{0, 0}, %{{0, 0} => 1}}, &single_move/2)
   end
 
   @spec single_move(String.t, {coordinate, visits}) :: {coordinate, visits}
@@ -58,6 +63,53 @@ defmodule Day3 do
     Map.merge(%{location => 1}, visited, fn _k, v1, v2 -> v1 + v2 end)
   end
 
-  @spec calc_uniq_visits({coordinate, visits}) :: integer
+  @spec calc_uniq_visits({coordinate, visits}) :: non_neg_integer
   defp calc_uniq_visits({_location, visited}), do: Enum.count(visited)
+
+  @doc """
+  Take a string of directions and tell how many unique locations santa and his robot visited
+
+  #Examples
+
+      iex> Day3.robo_deliveries("^v")
+      3
+
+      iex> Day3.robo_deliveries("^>v<")
+      3
+
+      iex> Day3.robo_deliveries("^v^v^v^v^v")
+      11
+  """
+  @spec robo_deliveries(String.t) :: non_neg_integer
+  def robo_deliveries(directions) do
+    directions
+    |> String.graphemes
+    |> split_directions
+    |> run_routes
+    |> Enum.count
+  end
+
+  @spec split_directions([String.t]) :: {[String.t], [String.t]}
+  defp split_directions(directions) do
+    do_split_directions(directions, [], [])
+  end
+
+  @spec do_split_directions([String.t], [String.t], [String.t]) :: {[String.t], [String.t]}
+  defp do_split_directions([], santa_list, robot_list), do: {Enum.reverse(santa_list), Enum.reverse(robot_list)}
+  defp do_split_directions([santa_move | []], santa_list, robot_list) do
+    do_split_directions([], [santa_move | santa_list], robot_list)
+  end
+  defp do_split_directions([santa_move, robot_move | tail], santa_list, robot_list) do
+    do_split_directions(tail, [santa_move | santa_list], [robot_move | robot_list])
+  end
+
+  @spec run_routes({[String.t], [String.t]}) :: visits
+  defp run_routes({santa_route, robot_route}) do
+    merge_routes(run_route(santa_route), run_route(robot_route))
+  end
+
+  @spec merge_routes({coordinate, visits}, {coordinate, visits}) :: visits
+  defp merge_routes({_, santa_visits}, {_, robot_visits}) do
+    Map.merge(santa_visits, robot_visits, fn _k, v1, v2 -> v1 + v2 end)
+  end
 end

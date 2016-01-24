@@ -10,21 +10,19 @@ defmodule Day3.CLI do
   end
 
   defp process({:error, reason}), do: IO.puts reason
-  defp process({:ok, filename}) do
+  defp process({:ok, filename, options}) do
     filename
-    |> File.stream!
-    |> Enum.reduce(0, &process_line/2)
+    |> File.read!
+    |> String.strip
+    |> deliver(options)
   end
 
-  defp process_line(text, acc) do
-    text
-    |> String.strip
-    |> Day3.make_deliveries
-  end
+  defp deliver(directions, [robot: true]), do: Day3.robo_deliveries(directions)
+  defp deliver(directions, _), do: Day3.make_deliveries(directions)
 
   defp parse_args(args) do
-    case OptionParser.parse(args) do
-      {_, [filename], _} -> {:ok, filename}
+    case OptionParser.parse(args, strict: ["robot": :boolean]) do
+      {options, [filename], _} -> {:ok, filename, options}
       {_, [], _} -> {:error, "Please specify a file"}
     end
   end
