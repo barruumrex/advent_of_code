@@ -22,10 +22,14 @@ defmodule Day4.CLI do
     filename
     |> File.read!
     |> String.strip
-    |> Day4.find_coin
+    |> find_5_and_6
   end
 
-  defp format(solution) do
-    "Your solution is #{solution}"
+  defp find_5_and_6(text) do
+    {Day4.find_coin(text,5), Day4.find_coin(text,6)}
+  end
+
+  defp format({solution5, solution6}) do
+    "Solution with five zeroes is #{solution5}.\nSolution with six zeroes is #{solution6}"
   end
 end
