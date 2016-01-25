@@ -155,24 +155,35 @@ defmodule Day5 do
   def repeated_tuple?(text) do
     text
     |> String.graphemes
-    |> tuple_within?
+    |> Enum.chunk(2, 1)
+    |> has_duplicate?
   end
+
+  @doc """
+  Checks if Enumerable contains any duplicate members
+
+  #Examples
+
+      iex> Day5.has_duplicate?(["a", 1, 3, "a"])
+      true
+
+      iex> Day5.has_duplicate?([1, 2, 3, 4])
+      false
+  """
+  @spec has_duplicate?(Enumerable.t) :: boolean
+  def has_duplicate?(members), do: do_has_duplicate?(members, false)
+
+  @spec do_has_duplicate?(Enumerable.t, boolean) :: boolean
+  defp do_has_duplicate?(_, true), do: true
+  defp do_has_duplicate?([], false), do: false
+  defp do_has_duplicate?([first | rest], false), do: do_has_duplicate?(rest, Enum.member?(rest, first))
+
 
   @spec tuple_within?([String.t]) :: boolean
   defp tuple_within?([first | rest]), do: do_tuple_within?(false, first, rest)
 
-  @spec do_tuple_within?(boolean, String.t, [String.t]) :: boolean
-  defp do_tuple_within?(true, _, _), do: true
-  defp do_tuple_within?(_result, _, rest) when length(rest) < 3, do: false
-  defp do_tuple_within?(_, first, [second | rest]) do
-    rest
-    |> Enum.join
-    |> String.contains?(first <> second)
-    |> do_tuple_within?(second, rest)
-  end
-
   @doc """
-  Checks if a character repeats if with a single character between the repetition
+  Checks if a character repeats with a single character between the repetition
 
   #Examples
   #Examples
