@@ -1,0 +1,1 @@
+sidebarNodes={"exceptions":[],"extras":[{"id":"api-reference","title":"API Reference","headers":[]}],"modules":[{"id":"Day1.CLI","title":"Day1.CLI","functions":[{"id":"main/1","anchor":"main/1"}]},{"id":"UnbalancedParen","title":"UnbalancedParen","functions":[{"id":"get_balance/1","anchor":"get_balance/1"},{"id":"get_degree/1","anchor":"get_degree/1"}]}],"protocols":[]}

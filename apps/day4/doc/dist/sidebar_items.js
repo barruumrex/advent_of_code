@@ -1,0 +1,1 @@
+sidebarNodes={"exceptions":[],"extras":[{"id":"api-reference","title":"API Reference","headers":[]}],"modules":[{"id":"Day4","title":"Day4","functions":[{"id":"find_coin/2","anchor":"find_coin/2"}]},{"id":"Day4.CLI","title":"Day4.CLI","functions":[{"id":"main/1","anchor":"main/1"}]}],"protocols":[]}
