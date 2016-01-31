@@ -10,36 +10,50 @@ defmodule Day6 do
   @doc """
   Run all instructions and return number of lights on at the end
 
-  #Examples
+  ## Examples
 
-      iex> Day6.perform_instructions(["turn on 0,0 through 999,999"])
+      iex> Day6.perform_instructions(["turn on 0,0 through 999,999"], :part1)
       1000000
 
-      iex> Day6.perform_instructions(["turn on 0,0 through 999,999", "toggle 0,0 through 999,0"])
+      iex> Day6.perform_instructions(["turn on 0,0 through 999,999", "toggle 0,0 through 999,0"], :part1)
       999000
+
+      iex> Day6.perform_instructions(["turn on 0,0 through 999,999"], :part2)
+      1000000
+
+      iex> Day6.perform_instructions(["turn on 0,0 through 999,999", "toggle 0,0 through 999,0"], :part2)
+      1002000
   """
-  @spec perform_instructions(list(String.t)) :: integer
-  def perform_instructions(instructions) do
+  @spec perform_instructions(list(String.t), :part1 | :part2) :: non_neg_integer
+  def perform_instructions(instructions, mode) do
     instructions
-    |> Enum.reduce(%{}, &(perform_instruction(&1, &2, :part1)))
-    |> Enum.reduce(0, fn {_key, 1}, acc -> acc + 1
-                         {_key, 0}, acc -> acc end)
+    |> Enum.reduce(%{}, &(perform_instruction(&1, &2, mode)))
+    |> Enum.reduce(0, fn {_key, val}, acc -> acc + val end)
   end
 
   @doc """
   Run instruction against a grid of lights
 
-  #Examples
+  ## Examples
 
       iex> Day6.perform_instruction("turn on 0,0 through 1,1", %{}, :part1)
       %{{0, 0} => 1, {0, 1} => 1, {1, 0} => 1, {1, 1} => 1}
 
       iex> Day6.perform_instruction("toggle 0,0 through 1,1", %{{0, 0} => 1}, :part1)
       %{{0, 0} => 0, {0, 1} => 1, {1, 0} => 1, {1, 1} => 1}
+
+      iex> Day6.perform_instruction("turn on 0,0 through 1,1", %{}, :part2)
+      %{{0, 0} => 1, {0, 1} => 1, {1, 0} => 1, {1, 1} => 1}
+
+      iex> Day6.perform_instruction("toggle 0,0 through 1,1", %{{0, 0} => 1}, :part2)
+      %{{0, 0} => 3, {0, 1} => 2, {1, 0} => 2, {1, 1} => 2}
+
+      iex> Day6.perform_instruction("turn off 0,0 through 1,1", %{{0, 0} => 1}, :part2)
+      %{{0, 0} => 0, {0, 1} => 0, {1, 0} => 0, {1, 1} => 0}
   """
   @spec perform_instruction(String.t, map, :part1 | :part2) :: map
-  def perform_instruction(instruction, lights, toggle) do
-    {action, [{start_x, start_y}, {end_x, end_y}]} = parse_instruction(instruction, toggle)
+  def perform_instruction(instruction, lights, mode) do
+    {action, [{start_x, start_y}, {end_x, end_y}]} = parse_instruction(instruction, mode)
 
     changes = for x <- start_x..end_x, y <- start_y..end_y, do: action.({x, y}, lights)
     Map.merge(lights, Map.new(changes))
@@ -49,6 +63,9 @@ defmodule Day6 do
   defp parse_instruction("turn on " <> tail, :part1), do: {&on/2, get_coordinates(tail)}
   defp parse_instruction("turn off " <> tail, :part1), do: {&off/2, get_coordinates(tail)}
   defp parse_instruction("toggle " <> tail, :part1), do: {&toggle/2, get_coordinates(tail)}
+  defp parse_instruction("turn on " <> tail, :part2), do: {&increment/2, get_coordinates(tail)}
+  defp parse_instruction("turn off " <> tail, :part2), do: {&decrement/2, get_coordinates(tail)}
+  defp parse_instruction("toggle " <> tail, :part2), do: {&two_step/2, get_coordinates(tail)}
 
   @spec get_coordinates(String.t) :: list(coordinate)
   defp get_coordinates(sentence) do
@@ -70,7 +87,7 @@ defmodule Day6 do
     value = lights
       |> Map.get(key, 0)
       |> do_toggle
-  {key, value}
+    {key, value}
   end
 
   @spec do_toggle(1 | 0) :: 1 | 0
@@ -83,4 +100,27 @@ defmodule Day6 do
   @spec off(coordinate, map) :: {coordinate, 0}
   defp off(key, _lights), do: {key, 0}
 
+  @spec increment(coordinate, map) :: {coordinate, non_neg_integer}
+  defp increment(key, lights) do
+    value = lights
+      |> Map.get(key, 0)
+      |> (&(&1 + 1)).()
+    {key, value}
+  end
+
+  @spec decrement(coordinate, map) :: {coordinate, non_neg_integer}
+  defp decrement(key, lights) do
+    value = lights
+      |> Map.get(key, 0)
+      |> (&(if &1 == 0, do: 0, else: &1 - 1)).()
+    {key, value}
+  end
+
+  @spec two_step(coordinate, map) :: {coordinate, non_neg_integer}
+  defp two_step(key, lights) do
+    value = lights
+      |> Map.get(key, 0)
+      |> (&(&1 + 2)).()
+    {key, value}
+  end
 end
