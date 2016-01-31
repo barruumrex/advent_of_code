@@ -21,7 +21,7 @@ defmodule Day6 do
   @spec perform_instructions(list(String.t)) :: integer
   def perform_instructions(instructions) do
     instructions
-    |> Enum.reduce(%{}, &perform_instruction/2)
+    |> Enum.reduce(%{}, &(perform_instruction(&1, &2, :part1)))
     |> Enum.reduce(0, fn {_key, 1}, acc -> acc + 1
                          {_key, 0}, acc -> acc end)
   end
@@ -31,24 +31,24 @@ defmodule Day6 do
 
   #Examples
 
-      iex> Day6.perform_instruction("turn on 0,0 through 1,1", %{})
+      iex> Day6.perform_instruction("turn on 0,0 through 1,1", %{}, :part1)
       %{{0, 0} => 1, {0, 1} => 1, {1, 0} => 1, {1, 1} => 1}
 
-      iex> Day6.perform_instruction("toggle 0,0 through 1,1", %{{0, 0} => 1})
+      iex> Day6.perform_instruction("toggle 0,0 through 1,1", %{{0, 0} => 1}, :part1)
       %{{0, 0} => 0, {0, 1} => 1, {1, 0} => 1, {1, 1} => 1}
   """
-  @spec perform_instruction(String.t, map) :: map
-  def perform_instruction(instruction, lights) do
-    {action, [{start_x, start_y}, {end_x, end_y}]} = parse_instruction(instruction)
+  @spec perform_instruction(String.t, map, :part1 | :part2) :: map
+  def perform_instruction(instruction, lights, toggle) do
+    {action, [{start_x, start_y}, {end_x, end_y}]} = parse_instruction(instruction, toggle)
 
     changes = for x <- start_x..end_x, y <- start_y..end_y, do: action.({x, y}, lights)
     Map.merge(lights, Map.new(changes))
   end
 
-  @spec parse_instruction(String.t) :: {(coordinate, Map -> {coordinate, 1 | 0}), list(coordinate)}
-  defp parse_instruction("turn on " <> tail), do: {&on/2, get_coordinates(tail)}
-  defp parse_instruction("turn off " <> tail), do: {&off/2, get_coordinates(tail)}
-  defp parse_instruction("toggle " <> tail), do: {&toggle/2, get_coordinates(tail)}
+  @spec parse_instruction(String.t, :part1 | :part2) :: {(coordinate, Map -> {coordinate, 1 | 0}), list(coordinate)}
+  defp parse_instruction("turn on " <> tail, :part1), do: {&on/2, get_coordinates(tail)}
+  defp parse_instruction("turn off " <> tail, :part1), do: {&off/2, get_coordinates(tail)}
+  defp parse_instruction("toggle " <> tail, :part1), do: {&toggle/2, get_coordinates(tail)}
 
   @spec get_coordinates(String.t) :: list(coordinate)
   defp get_coordinates(sentence) do
@@ -82,4 +82,5 @@ defmodule Day6 do
 
   @spec off(coordinate, map) :: {coordinate, 0}
   defp off(key, _lights), do: {key, 0}
+
 end
