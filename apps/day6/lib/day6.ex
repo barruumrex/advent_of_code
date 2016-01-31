@@ -41,14 +41,14 @@ defmodule Day6 do
   def perform_instruction(instruction, lights) do
     {action, [{start_x, start_y}, {end_x, end_y}]} = parse_instruction(instruction)
 
-    coordinates = for x <- start_x..end_x, y <- start_y..end_y, do: {x,y}
-    Enum.reduce(coordinates, lights, &(update_coordinate(&1, &2, action)))
+    changes = for x <- start_x..end_x, y <- start_y..end_y, do: action.({x, y}, lights)
+    Map.merge(lights, Map.new(changes))
   end
 
   @spec parse_instruction(String.t) :: {(String.t -> :on | :off), list(coordinate)}
-  defp parse_instruction("turn on " <> tail), do: {&on/1, get_coordinates(tail)}
-  defp parse_instruction("turn off " <> tail), do: {&off/1, get_coordinates(tail)}
-  defp parse_instruction("toggle " <> tail), do: {&toggle/1, get_coordinates(tail)}
+  defp parse_instruction("turn on " <> tail), do: {&on/2, get_coordinates(tail)}
+  defp parse_instruction("turn off " <> tail), do: {&off/2, get_coordinates(tail)}
+  defp parse_instruction("toggle " <> tail), do: {&toggle/2, get_coordinates(tail)}
 
   @spec get_coordinates(String.t) :: list(coordinate)
   defp get_coordinates(sentence) do
@@ -65,21 +65,21 @@ defmodule Day6 do
     |> List.to_tuple
   end
 
-  @spec toggle( :on | :off | nil) :: :off | :on
-  defp toggle(:on), do: :off
-  defp toggle(:off), do: :on
-  defp toggle(_), do: :on
-
-  @spec on( :on | :off | nil) :: :on
-  defp on(_), do: :on
-
-  @spec off( :on | :off | nil) :: :off
-  defp off(_), do: :off
-
-  @spec update_coordinate(coordinate, map, fun) :: map
-  defp update_coordinate(coordinate, lights, action) do
-    lights
-    |> Map.get_and_update(coordinate, fn(current_value) -> {current_value, action.(current_value)} end)
-    |> elem(1)
+  @spec toggle(coordinate, Map) :: tuple
+  defp toggle(key, lights) do
+    value = lights
+      |> Map.get(key, :off)
+      |> do_toggle
+  {key, value}
   end
+
+  @spec do_toggle(:on | :off) :: :on | :off
+  defp do_toggle(:on), do: :off
+  defp do_toggle(:off), do: :on
+
+  @spec on(coordinate, Map) :: tuple
+  defp on(key, _lights), do: {key, :on}
+
+  @spec off(coordinate, Map) :: tuple
+  defp off(key, _lights), do: {key, :off}
 end
