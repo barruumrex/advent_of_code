@@ -1,11 +1,21 @@
 defmodule Day6 do
   @moduledoc """
-    Helper functions for day6 of Advent of code
+  Helper functions for day6 of Advent of code
   """
   @typedoc """
-  Tuple representing length, width, and height
+  Tuple representing x and y coordinates
   """
-  @type coordinate :: {integer, integer}
+  @type coordinate :: {non_neg_integer, non_neg_integer}
+
+  @typedoc """
+  Tuple representing a light
+  """
+  @type light :: {coordinate, non_neg_integer}
+
+  @typedoc """
+  Map representing the light field
+  """
+  @type light_field :: %{coordinate: non_neg_integer}
 
   @doc """
   Run all instructions and return number of lights on at the end
@@ -51,15 +61,23 @@ defmodule Day6 do
       iex> Day6.perform_instruction("turn off 0,0 through 1,1", %{{0, 0} => 1}, :part2)
       %{{0, 0} => 0, {0, 1} => 0, {1, 0} => 0, {1, 1} => 0}
   """
-  @spec perform_instruction(String.t, map, :part1 | :part2) :: map
+  @spec perform_instruction(String.t, light_field, :part1 | :part2) :: light_field
   def perform_instruction(instruction, lights, mode) do
-    {action, [{start_x, start_y}, {end_x, end_y}]} = parse_instruction(instruction, mode)
-
-    changes = for x <- start_x..end_x, y <- start_y..end_y, do: action.({x, y}, lights)
-    Map.merge(lights, Map.new(changes))
+    instruction
+    |> parse_instruction(mode)
+    |> get_changeset(lights)
+    |> merge_changeset(lights)
   end
 
-  @spec parse_instruction(String.t, :part1 | :part2) :: {(coordinate, Map -> {coordinate, 1 | 0}), list(coordinate)}
+  @spec get_changeset({(coordinate, light_field -> light), list(coordinate)}, light_field) :: list(light)
+  defp get_changeset({action, [{start_x, start_y}, {end_x, end_y}]}, lights) do
+    for x <- start_x..end_x, y <- start_y..end_y, do: action.({x, y}, lights)
+  end
+
+  @spec merge_changeset(list(light), light_field) :: light_field
+  defp merge_changeset(changeset, lights), do: Map.merge(lights, Map.new(changeset))
+
+  @spec parse_instruction(String.t, :part1 | :part2) :: {(coordinate, light_field -> light), list(coordinate)}
   defp parse_instruction("turn on " <> tail, :part1), do: {&on/2, get_coordinates(tail)}
   defp parse_instruction("turn off " <> tail, :part1), do: {&off/2, get_coordinates(tail)}
   defp parse_instruction("toggle " <> tail, :part1), do: {&toggle/2, get_coordinates(tail)}
@@ -82,7 +100,7 @@ defmodule Day6 do
     |> List.to_tuple
   end
 
-  @spec toggle(coordinate, map) :: {coordinate, 1 | 0}
+  @spec toggle(coordinate, light_field) :: {coordinate, 1 | 0}
   defp toggle(key, lights) do
     value = lights
       |> Map.get(key, 0)
@@ -94,33 +112,31 @@ defmodule Day6 do
   defp do_toggle(1), do: 0
   defp do_toggle(0), do: 1
 
-  @spec on(coordinate, map) :: {coordinate, 1}
+  @spec on(coordinate, light_field) :: {coordinate, 1}
   defp on(key, _lights), do: {key, 1}
 
-  @spec off(coordinate, map) :: {coordinate, 0}
+  @spec off(coordinate, light_field) :: {coordinate, 0}
   defp off(key, _lights), do: {key, 0}
 
-  @spec increment(coordinate, map) :: {coordinate, non_neg_integer}
+  @spec increment(coordinate, light_field) :: light
   defp increment(key, lights) do
-    value = lights
-      |> Map.get(key, 0)
-      |> (&(&1 + 1)).()
-    {key, value}
+    {key, apply_change(key, lights, &(&1 + 1)) }
   end
 
-  @spec decrement(coordinate, map) :: {coordinate, non_neg_integer}
+  @spec decrement(coordinate, light_field) :: light
   defp decrement(key, lights) do
-    value = lights
-      |> Map.get(key, 0)
-      |> (&(if &1 == 0, do: 0, else: &1 - 1)).()
-    {key, value}
+    {key, apply_change(key, lights, &(if &1 == 0, do: 0, else: &1 - 1)) }
   end
 
-  @spec two_step(coordinate, map) :: {coordinate, non_neg_integer}
+  @spec two_step(coordinate, light_field) :: light
   defp two_step(key, lights) do
-    value = lights
-      |> Map.get(key, 0)
-      |> (&(&1 + 2)).()
-    {key, value}
+    {key, apply_change(key, lights, &(&1 + 2)) }
+  end
+
+  @spec apply_change(coordinate, light_field, (non_neg_integer -> non_neg_integer)) :: non_neg_integer
+  defp apply_change(key, lights, change) do
+    lights
+    |> Map.get(key, 0)
+    |> change.()
   end
 end
