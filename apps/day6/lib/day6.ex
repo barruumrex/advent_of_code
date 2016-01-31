@@ -18,7 +18,7 @@ defmodule Day6 do
       iex> Day6.perform_instructions(["turn on 0,0 through 999,999", "toggle 0,0 through 999,0"])
       999000
   """
-  @spec perform_instructions(String.t) :: integer
+  @spec perform_instructions(list(String.t)) :: integer
   def perform_instructions(instructions) do
     instructions
     |> Enum.reduce(%{}, &perform_instruction/2)
@@ -37,7 +37,7 @@ defmodule Day6 do
       iex> Day6.perform_instruction("toggle 0,0 through 1,1", %{{0, 0} => :on})
       %{{0, 0} => :off, {0, 1} => :on, {1, 0} => :on, {1, 1} => :on}
   """
-  @spec perform_instruction(String.t, Map) :: Map
+  @spec perform_instruction(String.t, map) :: map
   def perform_instruction(instruction, lights) do
     {action, [{start_x, start_y}, {end_x, end_y}]} = parse_instruction(instruction)
 
@@ -45,7 +45,7 @@ defmodule Day6 do
     Map.merge(lights, Map.new(changes))
   end
 
-  @spec parse_instruction(String.t) :: {(String.t -> :on | :off), list(coordinate)}
+  @spec parse_instruction(String.t) :: {(coordinate, Map -> {coordinate, :on | :off}), list(coordinate)}
   defp parse_instruction("turn on " <> tail), do: {&on/2, get_coordinates(tail)}
   defp parse_instruction("turn off " <> tail), do: {&off/2, get_coordinates(tail)}
   defp parse_instruction("toggle " <> tail), do: {&toggle/2, get_coordinates(tail)}
@@ -65,7 +65,7 @@ defmodule Day6 do
     |> List.to_tuple
   end
 
-  @spec toggle(coordinate, Map) :: tuple
+  @spec toggle(coordinate, map) :: {coordinate, :on | :off}
   defp toggle(key, lights) do
     value = lights
       |> Map.get(key, :off)
@@ -77,9 +77,9 @@ defmodule Day6 do
   defp do_toggle(:on), do: :off
   defp do_toggle(:off), do: :on
 
-  @spec on(coordinate, Map) :: tuple
+  @spec on(coordinate, map) :: tuple
   defp on(key, _lights), do: {key, :on}
 
-  @spec off(coordinate, Map) :: tuple
+  @spec off(coordinate, map) :: tuple
   defp off(key, _lights), do: {key, :off}
 end
