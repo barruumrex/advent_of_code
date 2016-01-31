@@ -8,6 +8,25 @@ defmodule Day6 do
   @type coordinate :: {integer, integer}
 
   @doc """
+  Run all instructions and return number of lights on at the end
+
+  #Examples
+
+      iex> Day6.perform_instructions(["turn on 0,0 through 999,999"])
+      1000000
+
+      iex> Day6.perform_instructions(["turn on 0,0 through 999,999", "toggle 0,0 through 999,0"])
+      999000
+  """
+  @spec perform_instructions(String.t) :: integer
+  def perform_instructions(instructions) do
+    instructions
+    |> Enum.reduce(%{}, &perform_instruction/2)
+    |> Enum.reduce(0, fn {_key, :on}, acc -> acc + 1
+                         {_key, :off}, acc -> acc end)
+  end
+
+  @doc """
   Run instruction against a grid of lights
 
   #Examples

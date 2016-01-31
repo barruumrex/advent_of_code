@@ -12,18 +12,14 @@ defmodule Day6.CLI do
   defp process({:error, reason}), do: reason
   defp process({:ok, filename}) do
     filename
-    |> File.stream!
-    |> Enum.reduce({0, 0}, &process_line/2)
+    |> File.read!
+    |> String.split("\n", trim: true)
+    |> Day6.perform_instructions
     |> format
   end
 
-  defp process_line(text, acc) do
-    text
-    |> String.strip
-  end
-
-  defp format(_) do
-    ""
+  defp format(results) do
+    "#{results} lights remain lit"
   end
 
   defp output_response(text) do
