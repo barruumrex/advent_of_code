@@ -69,13 +69,13 @@ defmodule Day6 do
     |> merge_changeset(lights)
   end
 
-  @spec get_changeset({(coordinate, light_field -> light), list(coordinate)}, light_field) :: list(light)
+  @spec get_changeset({(coordinate, light_field -> light), list(coordinate)}, light_field) :: light_field
   defp get_changeset({action, [{start_x, start_y}, {end_x, end_y}]}, lights) do
-    for x <- start_x..end_x, y <- start_y..end_y, do: action.({x, y}, lights)
+    for x <- start_x..end_x, y <- start_y..end_y, into: %{}, do: action.({x, y}, lights)
   end
 
-  @spec merge_changeset(list(light), light_field) :: light_field
-  defp merge_changeset(changeset, lights), do: Map.merge(lights, Map.new(changeset))
+  @spec merge_changeset(light_field, light_field) :: light_field
+  defp merge_changeset(changeset, lights), do: Map.merge(lights, changeset)
 
   @spec parse_instruction(String.t, :part1 | :part2) :: {(coordinate, light_field -> light), list(coordinate)}
   defp parse_instruction("turn on " <> tail, :part1), do: {&on/2, get_coordinates(tail)}
