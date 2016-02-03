@@ -93,7 +93,7 @@ defmodule Day7 do
       value = action.(evaluated)
       Map.put(evaluated, gate, value)
     rescue
-      ErlangError -> evaluated
+      KeyError -> evaluated
     end
   end
 
