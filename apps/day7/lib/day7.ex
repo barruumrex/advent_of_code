@@ -12,10 +12,11 @@ defmodule Day7 do
   @doc """
   Runs a full Day7 circuit
   """
-  @spec run_circuit(list(String.t)) :: circuit
-  def run_circuit(wires) do
+  @spec run_circuit(list(String.t), %{String.t => non_neg_integer}) :: circuit
+  def run_circuit(wires, defaults \\ %{}) do
     wires
     |> setup_gates
+    |> Map.merge(fake_wires(defaults))
     |> eval_gates
   end
 
@@ -94,5 +95,12 @@ defmodule Day7 do
     rescue
       ErlangError -> evaluated
     end
+  end
+
+  @spec fake_wires(circuit) :: %{String.t => (circuit -> non_neg_integer)}
+  defp fake_wires(wires) do
+    wires
+    |> Enum.map(fn({index, value}) -> {index, fn(_) -> value end} end)
+    |> Enum.into(%{})
   end
 end
