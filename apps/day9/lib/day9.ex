@@ -1,7 +1,6 @@
 defmodule Day9 do
-  require IEx
   @moduledoc """
-  Helper functions for Day8 of Advent of Code
+  Helper functions for Day9 of Advent of Code
   """
 
   def traveling_salesman(lines) do
