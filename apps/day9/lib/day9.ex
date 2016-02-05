@@ -5,10 +5,11 @@ defmodule Day9 do
   """
 
   def traveling_salesman(lines) do
-    lines
-    |> get_edges()
-    |> calc_paths()
-    |> Enum.min_by(fn({path, length}) -> length end)
+    paths = lines
+      |> get_edges()
+      |> calc_paths()
+
+    [shortest_path(paths), longest_path(paths)]
   end
 
   defp get_edges(lines) do
@@ -74,5 +75,15 @@ defmodule Day9 do
 
       {length, length + acc}
     end)
+  end
+
+  defp shortest_path(paths) do
+    paths
+    |> Enum.min_by(fn({path, length}) -> length end)
+  end
+
+  defp longest_path(paths) do
+    paths
+    |> Enum.max_by(fn({path, length}) -> length end)
   end
 end
