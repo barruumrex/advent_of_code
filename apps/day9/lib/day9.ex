@@ -5,14 +5,13 @@ defmodule Day9 do
   """
 
   def traveling_salesman(lines) do
-    mappings = get_maps(lines)
-    cities = get_cities(mappings)
-    paths = create_paths(cities)
-    totals = walk_paths(paths, mappings)
-    Enum.min_by(totals, fn({path, length}) -> length end)
+    lines
+    |> get_edges()
+    |> calc_paths()
+    |> Enum.min_by(fn({path, length}) -> length end)
   end
 
-  defp get_maps(lines) do
+  defp get_edges(lines) do
     lines
     |> Enum.reduce(%{}, fn(line, acc) -> line |> parse_line() |> Map.merge(acc) end)
   end
@@ -34,9 +33,16 @@ defmodule Day9 do
     %{edge => length}
   end
 
-  defp get_cities(mappings) do
-    mappings
-    |> Map.keys
+  defp calc_paths(edges) do
+    edges
+    |> get_cities()
+    |> create_paths()
+    |> walk_paths(edges)
+  end
+
+  defp get_cities(edges) do
+    edges
+    |> Map.keys()
     |> Enum.flat_map(&Tuple.to_list/1)
     |> Enum.uniq()
   end
@@ -62,9 +68,10 @@ defmodule Day9 do
   defp walk_path(path, distances) do
     path
     |> Enum.chunk(2,1)
-    |> Enum.map_reduce(0, fn(x, acc) ->
-      edge = x |> Enum.sort |> List.to_tuple
+    |> Enum.map_reduce(0, fn(cities, acc) ->
+      edge = cities |> Enum.sort |> List.to_tuple
       length = Map.fetch!(distances, edge)
+
       {length, length + acc}
     end)
   end
