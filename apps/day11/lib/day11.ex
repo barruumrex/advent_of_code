@@ -81,7 +81,7 @@ defmodule Day11 do
   def remove_forbidden([char | rest]), do: [char | remove_forbidden(rest)]
 
   @spec valid_password?(char_list) :: boolean
-  defp valid_password?(chars), do: contains_straight?(chars) and contains_pairs?(chars)
+  defp valid_password?(chars), do: contains_straight?(chars) and contains_two_pairs?(chars)
 
   @doc """
   Find if char_list contains an incrementing straight.
@@ -107,22 +107,22 @@ defmodule Day11 do
   defp find_straight([_ | rest]), do: find_straight(rest)
 
   @doc """
-  Find if char_list contains two pairs
+  Find if char_list contains two pairs.
 
   ## Examples
 
-      iex> Day11.contains_pairs?('hijklmmn')
+      iex> Day11.contains_two_pairs?('hijklmmn')
       false
 
-      iex> Day11.contains_pairs?('abbceffg')
+      iex> Day11.contains_two_pairs?('abbceffg')
       true
   """
-  @spec contains_pairs?(char_list) :: boolean
-  def contains_pairs?(chars), do: do_contains_pairs?(chars, 0)
+  @spec contains_two_pairs?(char_list) :: boolean
+  def contains_two_pairs?(chars), do: do_contains_two_pairs?(chars, 0)
 
-  @spec do_contains_pairs?(char_list, non_neg_integer) :: boolean
-  defp do_contains_pairs?(_, 2), do: true
-  defp do_contains_pairs?([], _), do: false
-  defp do_contains_pairs?([x, x | rest], count), do: do_contains_pairs?(rest, count + 1)
-  defp do_contains_pairs?([_ | rest], count), do: do_contains_pairs?(rest, count)
+  @spec do_contains_two_pairs?(char_list, non_neg_integer) :: boolean
+  defp do_contains_two_pairs?(_, 2), do: true
+  defp do_contains_two_pairs?([], _), do: false
+  defp do_contains_two_pairs?([x, x | rest], count), do: do_contains_two_pairs?(rest, count + 1)
+  defp do_contains_two_pairs?([_ | rest], count), do: do_contains_two_pairs?(rest, count)
 end
