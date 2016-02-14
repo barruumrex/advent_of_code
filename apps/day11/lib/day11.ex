@@ -4,6 +4,26 @@ defmodule Day11 do
   """
 
   @doc """
+  Return the next valid password according to Santa's insane rules
+
+  ## Examples
+
+      iex> Day11.next_password("abcdefgh")
+      "abcdffaa"
+
+      iex> Day11.next_password("ghijklmn")
+      "ghjaabcc"
+  """
+  @spec next_password(String.t) :: String.t
+  def next_password(current) do
+    current
+    |> String.to_char_list()
+    |> Stream.unfold(fn x -> {x, increment(x)} end)
+    |> Enum.find(fn x -> contains_straight?(x) and contains_pairs?(x) and not contains_forbidden?(x) end)
+    |> to_string()
+  end
+
+  @doc """
   Increment char string to the next value
 
   ## Examples
