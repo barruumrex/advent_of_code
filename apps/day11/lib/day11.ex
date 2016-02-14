@@ -18,6 +18,7 @@ defmodule Day11 do
   def next_password(current) do
     current
     |> String.to_char_list()
+    |> increment()
     |> Stream.unfold(fn x -> {x, increment(x)} end)
     |> Enum.find(fn x -> contains_straight?(x) and contains_pairs?(x) and not contains_forbidden?(x) end)
     |> to_string()
