@@ -32,14 +32,14 @@ defmodule Day11 do
 
   ## Examples
 
-      iex> Day11.contains_straight('hijklmmn')
+      iex> Day11.contains_straight?('hijklmmn')
       true
 
-      iex> Day11.contains_straight('abbceffg')
+      iex> Day11.contains_straight?('abbceffg')
       false
   """
-  @spec contains_straight(char_list) :: boolean
-  def contains_straight(chars) do
+  @spec contains_straight?(char_list) :: boolean
+  def contains_straight?(chars) do
     chars
     |> Enum.chunk(3, 1)
     |> find_straight()
@@ -49,4 +49,18 @@ defmodule Day11 do
   defp find_straight([]), do: false
   defp find_straight([[x, y, z] | _rest]) when y == (x + 1) and z == (x + 2), do: true
   defp find_straight([_ | rest]), do: find_straight(rest)
+
+  @doc """
+  Find if char_list contains any forbbiden chars, 'i' 'o' 'l'
+
+  ## Examples
+
+      iex> Day11.contains_forbidden?('hijklmmn')
+      true
+
+      iex> Day11.contains_forbidden?('abbceffg')
+      false
+  """
+  @spec contains_forbidden?(char_list) :: boolean
+  def contains_forbidden?(chars), do: chars |> Enum.any?(&Enum.member?('iol', &1))
 end
