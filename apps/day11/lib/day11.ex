@@ -63,4 +63,25 @@ defmodule Day11 do
   """
   @spec contains_forbidden?(char_list) :: boolean
   def contains_forbidden?(chars), do: chars |> Enum.any?(&Enum.member?('iol', &1))
+
+
+  @doc """
+  Find if char_list contains two pairs
+
+  ## Examples
+
+      iex> Day11.contains_pairs?('hijklmmn')
+      false
+
+      iex> Day11.contains_pairs?('abbceffg')
+      true
+  """
+  @spec contains_pairs?(char_list) :: boolean
+  def contains_pairs?(chars), do: do_contains_pairs?(chars, 0)
+
+  @spec do_contains_pairs?(char_list, non_neg_integer) :: boolean
+  defp do_contains_pairs?(_, 2), do: true
+  defp do_contains_pairs?([], _), do: false
+  defp do_contains_pairs?([x, x | rest], count), do: do_contains_pairs?(rest, count + 1)
+  defp do_contains_pairs?([_ | rest], count), do: do_contains_pairs?(rest, count)
 end
