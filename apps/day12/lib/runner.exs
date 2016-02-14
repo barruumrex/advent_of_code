@@ -17,3 +17,8 @@ end
 |> File.read!()
 |> Day12.json_sum()
 |> Runner.print_result()
+
+"lib/input.txt"
+|> File.read!()
+|> Day12.red_json_sum()
+|> Runner.print_result()
