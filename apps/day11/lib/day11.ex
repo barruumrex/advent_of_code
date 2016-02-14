@@ -27,5 +27,26 @@ defmodule Day11 do
   defp do_increment([?z | rest]), do: [?a | do_increment(rest)]
   defp do_increment([char | rest]), do: [char + 1 | rest]
 
+  @doc """
+  Find if char_list contains an incrementing straight
 
+  ## Examples
+
+      iex> Day11.contains_straight('hijklmmn')
+      true
+
+      iex> Day11.contains_straight('abbceffg')
+      false
+  """
+  @spec contains_straight(char_list) :: boolean
+  def contains_straight(chars) do
+    chars
+    |> Enum.chunk(3, 1)
+    |> find_straight()
+  end
+
+  @spec find_straight(char_list) :: boolean
+  defp find_straight([]), do: false
+  defp find_straight([[x, y, z] | _rest]) when y == (x + 1) and z == (x + 2), do: true
+  defp find_straight([_ | rest]), do: find_straight(rest)
 end
