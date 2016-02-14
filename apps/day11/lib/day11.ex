@@ -3,6 +3,9 @@ defmodule Day11 do
   Helper functions for Day11 of Advent of Code
   """
 
+  @forbidden [?i, ?o, ?l]
+  @first_valid_char ?a..?z |> Enum.find(&(not Enum.member?(@forbidden, &1)))
+
   @doc """
   Return the next valid password according to Santa's insane rules
 
@@ -18,14 +21,15 @@ defmodule Day11 do
   def next_password(current) do
     current
     |> String.to_char_list()
-    |> increment()
+    |> increment() #Current password is never valid. Increment once.
+    |> remove_forbidden()
     |> Stream.unfold(fn x -> {x, increment(x)} end)
-    |> Enum.find(fn x -> contains_straight?(x) and contains_pairs?(x) and not contains_forbidden?(x) end)
+    |> Enum.find(&valid_password?/1)
     |> to_string()
   end
 
   @doc """
-  Increment char string to the next value
+  Increment char list to the next value, skipping forbidden characters.
 
   ## Examples
 
@@ -45,11 +49,42 @@ defmodule Day11 do
 
   @spec do_increment(char_list) :: char_list
   defp do_increment([]), do: []
-  defp do_increment([?z | rest]), do: [?a | do_increment(rest)]
-  defp do_increment([char | rest]), do: [char + 1 | rest]
+  defp do_increment([?z | rest]), do: [increment_char(?z) | do_increment(rest)]
+  defp do_increment([char | rest]), do: [increment_char(char) | rest]
+
+  @spec increment_char(char) :: char
+  defp increment_char(char), do: do_increment_char(char, false)
+
+  @spec do_increment_char(char, boolean) :: char
+  defp do_increment_char(char, true), do: char
+  defp do_increment_char(?z, false), do: do_increment_char(?a, not Enum.member?(@forbidden, ?a))
+  defp do_increment_char(char, false), do: do_increment_char(char + 1, not Enum.member?(@forbidden, char + 1))
 
   @doc """
-  Find if char_list contains an incrementing straight
+  Increment char_list to next valid state.
+
+  Increment first forbidden character and set all subsequent characters to the first
+  non forbidden character.
+  ## Examples
+
+      iex> Day11.remove_forbidden('abcdefgh')
+      'abcdefgh'
+
+      iex> Day11.remove_forbidden('abicodlb')
+      'abjaaaaa'
+  """
+  @spec remove_forbidden(char_list) :: char_list
+  def remove_forbidden([]), do: []
+  def remove_forbidden([char | rest]) when char in @forbidden do
+    [increment_char(char) | List.duplicate(@first_valid_char, length(rest))]
+  end
+  def remove_forbidden([char | rest]), do: [char | remove_forbidden(rest)]
+
+  @spec valid_password?(char_list) :: boolean
+  defp valid_password?(chars), do: contains_straight?(chars) and contains_pairs?(chars)
+
+  @doc """
+  Find if char_list contains an incrementing straight.
 
   ## Examples
 
@@ -70,21 +105,6 @@ defmodule Day11 do
   defp find_straight([]), do: false
   defp find_straight([[x, y, z] | _rest]) when y == (x + 1) and z == (x + 2), do: true
   defp find_straight([_ | rest]), do: find_straight(rest)
-
-  @doc """
-  Find if char_list contains any forbbiden chars, 'i' 'o' 'l'
-
-  ## Examples
-
-      iex> Day11.contains_forbidden?('hijklmmn')
-      true
-
-      iex> Day11.contains_forbidden?('abbceffg')
-      false
-  """
-  @spec contains_forbidden?(char_list) :: boolean
-  def contains_forbidden?(chars), do: chars |> Enum.any?(&Enum.member?('iol', &1))
-
 
   @doc """
   Find if char_list contains two pairs
