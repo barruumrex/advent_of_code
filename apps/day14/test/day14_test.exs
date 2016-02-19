@@ -7,6 +7,15 @@ defmodule Day14Test do
     line = "Vixen can fly 19 km/s for 7 seconds, but then must rest for 124 seconds."
     assert Day14.parse_line(line) == reindeer
   end
+
+  test "Calculate leaderboard" do
+    comet = Reindeer.new({"Comet", "14", "10", "127"})
+    dancer = Reindeer.new({"Dancer", "16", "11", "162"})
+
+    team = [comet, dancer]
+
+    assert Day14.calc_leaderboard(team, 140, %{}) == %{comet => 1, dancer => 139}
+  end
 end
 
 defmodule ReindeerTest do

@@ -32,6 +32,31 @@ defmodule Day14 do
     |> List.to_tuple()
     |> Reindeer.new()
   end
+
+  @spec calc_leaderboard(list(Reindeer.t), non_neg_integer, %{Reindeer.t => non_neg_integer}) :: %{Reindeer.t => non_neg_integer}
+  def calc_leaderboard(reindeer_team, seconds, leaderboard) do
+    reindeer_team
+    |> find_leaders(seconds)
+    |> Map.new(fn(key) -> {key, 1} end)
+    |> Map.merge(leaderboard, fn(_, v1, v2) -> v1 + v2 end)
+  end
+
+  @doc """
+  List leaders at a specific time
+  """
+  @spec find_leaders(list(Reindeer.t), non_neg_integer) :: list(Reindeer.t)
+  def find_leaders(reindeer_team, seconds) do
+    distances = reindeer_team
+      |> Enum.map(fn(reindeer) -> {reindeer, Reindeer.fly_for(reindeer, seconds)} end)
+
+    max_distance = distances
+      |> Enum.max_by(fn({_, val}) -> val end)
+      |> elem(1)
+
+    distances
+    |> Enum.filter(fn({_, val}) -> val == max_distance end)
+    |> Keyword.keys()
+  end
 end
 
 defmodule Reindeer do
