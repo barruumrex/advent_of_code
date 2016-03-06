@@ -2,7 +2,7 @@ defmodule UnbalanceParen.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :day_1,
+    [app: :day1,
      version: "0.0.1",
      build_path: "../../_build",
      config_path: "../../config/config.exs",
@@ -37,7 +37,7 @@ defmodule UnbalanceParen.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:credo, "~> 0.3.0-dev2", only: [:dev, :test]},
+      {:credo, "~> 0.3", only: [:dev, :test]},
       {:dialyxir, "~> 0.3", only: [:dev]},
     ]
   end
