@@ -8,7 +8,7 @@ defmodule Day14.Mixfile do
      config_path: "../../config/config.exs",
      deps_path: "../../deps",
      lockfile: "../../mix.lock",
-     elixir: "~> 1.3-dev",
+     elixir: "~> 1.2",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      deps: deps]
@@ -36,9 +36,9 @@ defmodule Day14.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:credo, "~> 0.3.0-dev2", only: [:dev, :test]},
+      {:credo, "~> 0.3", only: [:dev, :test]},
       {:dialyxir, "~> 0.3", only: [:dev]},
-      {:benchfella, "~> 0.3.0", only: [:dev, :test]},
+      {:benchfella, "~> 0.3", only: [:dev, :test]},
     ]
   end
 end

@@ -8,9 +8,8 @@ distance = reindeer_team
 
 IO.puts "Maximum distance flown is #{distance}"
 
-1..2503
-|> Enum.reduce(%{}, fn(x, acc)
-  -> reindeer_team
-    |> Day14.calc_leaderboard(x, acc)
-  end)
-|> IO.inspect
+{%Reindeer{name: name}, value} = reindeer_team
+  |> Day14.calc_leaderboard(2503)
+  |> Enum.max_by(fn({_, val}) -> val end)
+
+IO.puts "#{name} lead for #{value} seconds"

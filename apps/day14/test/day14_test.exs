@@ -14,7 +14,7 @@ defmodule Day14Test do
 
     team = [comet, dancer]
 
-    assert Day14.calc_leaderboard(team, 140, %{}) == %{comet => 1, dancer => 139}
+    assert Day14.calc_leaderboard(team, 140) == %{comet => 1, dancer => 139}
   end
 end
 

@@ -4,6 +4,7 @@ defmodule Day14 do
   """
 
   @type reindeer_team :: list(Reindeer.t)
+  @type leaderboard :: %{Reindeer.t => non_neg_integer}
 
   @doc """
   Parse full input from file
@@ -33,8 +34,16 @@ defmodule Day14 do
     |> Reindeer.new()
   end
 
-  @spec calc_leaderboard(list(Reindeer.t), non_neg_integer, %{Reindeer.t => non_neg_integer}) :: %{Reindeer.t => non_neg_integer}
-  def calc_leaderboard(reindeer_team, seconds, leaderboard) do
+  @doc """
+  Calculate how many seconds each reindeer has been in the lead after a given time
+  """
+  @spec calc_leaderboard(list(Reindeer.t), non_neg_integer) :: leaderboard
+  def calc_leaderboard(reindeer_team, seconds) do
+    Enum.reduce(1..seconds, %{}, fn(x, acc) -> calc_leaders(reindeer_team, x, acc) end)
+  end
+
+  @spec calc_leaders(list(Reindeer.t), non_neg_integer, leaderboard) :: leaderboard
+  defp calc_leaders(reindeer_team, seconds, leaderboard) do
     reindeer_team
     |> find_leaders(seconds)
     |> Map.new(fn(key) -> {key, 1} end)
@@ -55,7 +64,7 @@ defmodule Day14 do
 
     distances
     |> Enum.filter(fn({_, val}) -> val == max_distance end)
-    |> Keyword.keys()
+    |> Enum.map(fn {key, val} -> key end)
   end
 end
 
